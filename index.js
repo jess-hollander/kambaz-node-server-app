@@ -2,17 +2,28 @@ import "dotenv/config";
 import express from 'express'
 import session from "express-session";
 import Hello from './Hello.js'
+import Lab5 from './Lab5/index.js'
 import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import cors from "cors";
-import Lab5 from "./Lab5/index.js";
 
 const app = express()
 app.use(cors({
   credentials: true,
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      process.env.CLIENT_URL
+    ];
+    // Allow any Vercel preview deployment
+    if (!origin || allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 }));
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
@@ -28,11 +39,10 @@ if (process.env.SERVER_ENV !== "development") {
   };
 }
 app.use(session(sessionOptions));
-app.use(cors()); 
 app.use(express.json());
 Hello(app)
+Lab5(app)
 UserRoutes(app, db);
 CourseRoutes(app, db);
 ModuleRoutes(app, db);
-Lab5(app);
 app.listen(process.env.PORT || 4000)
