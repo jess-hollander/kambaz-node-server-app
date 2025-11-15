@@ -11,7 +11,7 @@ import cors from "cors";
 const app = express()
 app.use(cors({
   credentials: true,
-  origin: process.env.CLIENT_URL || "http://localhost:4000",
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
 }));
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
