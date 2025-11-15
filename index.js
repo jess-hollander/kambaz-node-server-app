@@ -28,11 +28,11 @@ if (process.env.SERVER_ENV !== "development") {
   };
 }
 app.use(session(sessionOptions));
+app.use(cors()); 
 app.use(express.json());
 Hello(app)
 UserRoutes(app, db);
 CourseRoutes(app, db);
 ModuleRoutes(app, db);
 Lab5(app);
-app.use(cors()); 
 app.listen(process.env.PORT || 4000)
