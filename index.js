@@ -34,4 +34,5 @@ UserRoutes(app, db);
 CourseRoutes(app, db);
 ModuleRoutes(app, db);
 Lab5(app);
+app.use(cors()); 
 app.listen(process.env.PORT || 4000)

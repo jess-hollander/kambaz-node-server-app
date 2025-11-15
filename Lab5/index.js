@@ -1,7 +1,3 @@
-import express from "express";
-import Lab5 from "./Lab5/index.js";
-import cors from "cors";
-
 const assignment = {
   id: 1,
   title: "NodeJS Assignment",
@@ -204,8 +200,4 @@ const Lab5 = (app) => {
   
 };
 
-const app = express();
-app.use(cors());                   
-Lab5(app);                          
-app.listen(4000);
 export default Lab5;
