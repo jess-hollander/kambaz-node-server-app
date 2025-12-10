@@ -50,3 +50,4 @@ export default function AssignmentRoutes(app, db) {
   app.put("/api/assignments/:assignmentId", updateAssignment);
   app.delete("/api/assignments/:assignmentId", deleteAssignment);
 }
+

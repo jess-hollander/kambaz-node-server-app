@@ -2,13 +2,20 @@ import "dotenv/config";
 import express from 'express'
 import mongoose from "mongoose";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import Hello from './Hello.js'
 import Lab5 from './Lab5/index.js'
 import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
-import CourseRoutes from "./Kambaz/Assignments/routes.js";
+import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
+import QuizRoutes from "./Kambaz/Quizzes/routes.js";
+import QuizAttemptRoutes from "./Kambaz/QuizAttempts/routes.js";
+import PostRoutes from "./Kambaz/Pazza/Posts/routes.js";
+import AnswerRoutes from "./Kambaz/Pazza/Answers/routes.js";
+import FollowupDiscussionRoutes from "./Kambaz/Pazza/FollowupDiscussions/routes.js";
+import FolderRoutes from "./Kambaz/Pazza/Folders/routes.js";
 import cors from "cors";
 
 const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
@@ -17,29 +24,41 @@ const app = express()
 app.use(cors({
   credentials: true,
   origin: (origin, callback) => {
-    const allowedOrigins = [
-      "http://localhost:3000",
-      process.env.CLIENT_URL
-    ];
-    // Allow any Vercel preview deployment
-    if (!origin || allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Allow requests with no origin (like mobile apps, Postman, curl)
+    if (!origin) return callback(null, true);
+    
+    // Allow all localhost ports during development
+    if (origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:')) {
+      return callback(null, true);
     }
+    
+    // Allow Vercel deployments
+    if (origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow specific production URL
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
   },
 }));
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: CONNECTION_STRING,
+    touchAfter: 24 * 3600, // lazy session update (24 hours)
+  }),
 };
 if (process.env.SERVER_ENV !== "development") {
   sessionOptions.proxy = true;
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
-    domain: process.env.SERVER_URL,
   };
 }
 app.use(session(sessionOptions));
@@ -50,4 +69,10 @@ UserRoutes(app, db);
 CourseRoutes(app, db);
 ModuleRoutes(app, db);
 AssignmentRoutes(app, db);
+QuizRoutes(app);
+QuizAttemptRoutes(app);
+PostRoutes(app);
+AnswerRoutes(app);
+FollowupDiscussionRoutes(app);
+FolderRoutes(app);
 app.listen(process.env.PORT || 4000)

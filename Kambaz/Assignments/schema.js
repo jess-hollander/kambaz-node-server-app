@@ -12,3 +12,4 @@ const assignmentSchema = new mongoose.Schema(
   { collection: "assignments" }
 );
 export default assignmentSchema;
+

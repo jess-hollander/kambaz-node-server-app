@@ -16,3 +16,4 @@ const enrollmentSchema = new mongoose.Schema(
   { collection: "enrollments" }
 );
 export default enrollmentSchema;
+
