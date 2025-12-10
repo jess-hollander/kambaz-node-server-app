@@ -25,26 +25,31 @@ const Lab5 = (app) => {
   app.get("/lab5/welcome", (req, res) => {
     res.send("Welcome to Assignment 5");
   });
+
   app.get("/lab5/add/:a/:b", (req, res) => {
     const { a, b } = req.params;
     const sum = parseInt(a) + parseInt(b);
-    res.send(sum.toString());
+    res.json(sum);
   });
+
   app.get("/lab5/subtract/:a/:b", (req, res) => {
     const { a, b } = req.params;
     const sum = parseInt(a) - parseInt(b);
-    res.send(sum.toString());
+    res.json(sum);
   });
+
   app.get("/lab5/multiply/:a/:b", (req, res) => {
     const { a, b } = req.params;
     const sum = parseInt(a) * parseInt(b);
-    res.send(sum.toString());
+    res.json(sum);
   });
+
   app.get("/lab5/divide/:a/:b", (req, res) => {
     const { a, b } = req.params;
     const sum = parseInt(a) / parseInt(b);
-    res.send(sum.toString());
+    res.json(sum);
   });
+
   app.get("/lab5/calculator", (req, res) => {
     const { a, b, operation } = req.query;
     let result = 0;
@@ -62,9 +67,10 @@ const Lab5 = (app) => {
         result = parseInt(a) / parseInt(b);
         break;
       default:
-        result = "Invalid operation";
+        res.status(400).json({ error: "Invalid operation" });
+        return;
     }
-    res.send(result.toString());
+    res.json(result);
   });
 
   app.get("/lab5/assignment", (req, res) => {
@@ -74,16 +80,19 @@ const Lab5 = (app) => {
   app.get("/lab5/assignment/title", (req, res) => {
     res.json(assignment.title);
   });
+
   app.get("/lab5/assignment/title/:newTitle", (req, res) => {
     const { newTitle } = req.params;
     assignment.title = newTitle;
     res.json(assignment);
   });
+
   app.get("/lab5/assignment/score/:newScore", (req, res) => {
     const { newScore } = req.params;
     assignment.score = parseInt(newScore);
     res.json(assignment);
   });
+
   app.get("/lab5/assignment/completed/:newCompleted", (req, res) => {
     const { newCompleted } = req.params;
     assignment.completed = newCompleted === "true";
@@ -94,14 +103,17 @@ const Lab5 = (app) => {
   app.get("/lab5/module", (req, res) => {
     res.json(module);
   });
+
   app.get("/lab5/module/name", (req, res) => {
     res.json(module.name);
   });
+
   app.get("/lab5/module/name/:newName", (req, res) => {
     const { newName } = req.params;
     module.name = newName;
     res.json(module);
   });
+
   app.get("/lab5/module/description/:newDescription", (req, res) => {
     const { newDescription } = req.params;
     module.description = newDescription;
@@ -119,6 +131,7 @@ const Lab5 = (app) => {
     }
     res.json(todos);
   });
+
   app.post("/lab5/todos", (req, res) => {
     const newTodo = {
       ...req.body,
@@ -143,6 +156,7 @@ const Lab5 = (app) => {
     const todo = todos.find((t) => t.id === parseInt(id));
     res.json(todo);
   });
+
   app.delete("/lab5/todos/:id", (req, res) => {
     const { id } = req.params;
     const todo = todos.find((t) => t.id === parseInt(id));
@@ -151,10 +165,10 @@ const Lab5 = (app) => {
         .json({ message: `Unable to delete Todo with ID ${id}` });
       return;
     }
-
     todos.splice(todos.indexOf(todo), 1);
     res.sendStatus(200);
   });
+
   app.get("/lab5/todos/:id/delete", (req, res) => {
     const { id } = req.params;
     const todo = todos.find((t) => t.id === parseInt(id));
@@ -164,24 +178,28 @@ const Lab5 = (app) => {
     }
     res.json(todos);
   });
+
   app.get("/lab5/todos/:id/title/:title", (req, res) => {
     const { id, title } = req.params;
     const todo = todos.find((t) => t.id === parseInt(id));
     todo.title = title;
     res.json(todos);
   });
+
   app.get("/lab5/todos/:id/description/:description", (req, res) => {
     const { id, description } = req.params;
     const todo = todos.find((t) => t.id === parseInt(id));
     todo.description = description;
     res.json(todos);
   });
+
   app.get("/lab5/todos/:id/completed/:completed", (req, res) => {
     const { id, completed } = req.params;
     const todo = todos.find((t) => t.id === parseInt(id));
     todo.completed = completed === "true";
     res.json(todos);
   });
+
   app.put("/lab5/todos/:id", (req, res) => {
     const { id } = req.params;
     const todo = todos.find((t) => t.id === parseInt(id));
@@ -196,8 +214,6 @@ const Lab5 = (app) => {
     todo.completed = req.body.completed;
     res.sendStatus(200);
   });
-
-  
 };
 
 export default Lab5;
